@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="it"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Croce Rossa CNTS - Prenotazioni RP</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial,sans-serif;background:#f4f6f8;color:#111}
+header{background:#c8102e;color:#fff;padding:18px 16px;text-align:center}
+header h1{margin:0;font-size:28px}header p{margin:6px 0 0;opacity:.95}
+.wrap{max-width:900px;margin:0 auto;padding:16px}
+.card{background:#fff;border-radius:14px;padding:18px;margin:14px 0;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+h2{margin:0 0 10px}label{display:block;font-weight:700;margin:12px 0 4px}
+input,select{width:100%;padding:12px;border:1px solid #ccc;border-radius:10px;font-size:16px}
+button{background:#c8102e;color:#fff;border:0;padding:13px 18px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;width:100%}
+button.ghost{background:#fff;color:#c8102e;border:2px solid #c8102e}
+button.small{width:auto;padding:8px 12px;font-size:14px;margin:4px 4px 0 0}
+button.green{background:#15803d}button.gray{background:#6b7280}
+.ok{background:#dcfce7;border:1px solid #86efac;padding:12px;border-radius:10px;margin-top:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{border-bottom:1px solid #eee;padding:10px 6px;text-align:left}
+.badge{padding:4px 8px;border-radius:20px;font-size:12px;font-weight:700;background:#fef3c7}
+.badge.conf{background:#dcfce7}.badge.comp{background:#dbeafe}
+.top{display:flex;gap:10px;flex-wrap:wrap}.top button{width:auto}
+.hidden{display:none}.muted{color:#666;font-size:14px}
+.stat{display:inline-block;background:#fff;border:1px solid #eee;border-radius:10px;padding:10px 14px;margin:4px}
+</style></head><body>
+<header><h1>✚ Croce Rossa CNTS</h1><p>Prenotazioni Sanitarie RP</p></header>
+<div class="wrap">
+<div class="top"><button onclick="show('pub')">Prenota</button><button onclick="show('mine')">Le mie prenotazioni</button><button onclick="show('staff')">Area Staff</button></div>
+
+<div id="pub" class="card">
+<h2>Prenota una visita RP</h2><p class="muted">Compila solo questi 4 campi.</p>
+<label>Nome RP</label><input id="nome" placeholder="Nome RP">
+<label>Giorno</label><select id="giorno"><option value="">Seleziona giorno</option><option>Lunedì</option><option>Martedì</option><option>Mercoledì</option><option>Giovedì</option><option>Venerdì</option><option>Sabato</option><option>Domenica</option></select>
+<label>Data</label><input id="data" type="date">
+<label>Ora</label><select id="ora"><option value="">Seleziona ora</option><option>08:00</option><option>09:00</option><option>10:00</option><option>11:00</option><option>12:00</option><option>13:00</option><option>14:00</option><option>15:00</option><option>16:00</option><option>17:00</option><option>18:00</option><option>19:00</option><option>20:00</option></select>
+<button onclick="prenota()" style="margin-top:14px">Prenota</button>
+<div id="risultato"></div>
+</div>
+
+<div id="mine" class="card hidden">
+<h2>Le mie prenotazioni</h2>
+<label>Codice CNTS</label><input id="cercaCodice" placeholder="Es. CNTS-1234">
+<button onclick="cerca()">Cerca</button><div id="risCerca" style="margin-top:12px"></div>
+</div>
+
+<div id="staff" class="card hidden">
+<div id="loginStaff">
+<h2>Area Staff CNTS</h2>
+<label>Codice Staff</label><input id="codiceStaff" type="password" inputmode="numeric" autocomplete="off">
+<button onclick="loginStaff()">Entra</button><div id="errLogin" style="color:#c8102e;margin-top:10px"></div>
+</div>
+<div id="dashStaff" class="hidden">
+<h2>Console Staff CNTS</h2>
+<div><span class="stat">Totali: <b id="cTot">0</b></span><span class="stat">In attesa: <b id="cAtt">0</b></span><span class="stat">Confermate: <b id="cConf">0</b></span><span class="stat">Completate: <b id="cComp">0</b></span></div>
+<label>Cerca Nome RP / codice</label><input id="filtro" oninput="renderStaff()" placeholder="Cerca...">
+<div style="overflow-x:auto"><table><thead><tr><th>Codice</th><th>Nome RP</th><th>Giorno</th><th>Data</th><th>Ora</th><th>Stato</th><th>Azioni</th></tr></thead><tbody id="tbody"></tbody></table></div>
+<button class="ghost" onclick="logoutStaff()" style="margin-top:12px">Esci</button>
+</div>
+</div>
+<p class="muted" style="text-align:center">Progetto Roleplay - Non è un servizio sanitario reale. Funziona offline, dati salvati su questo dispositivo.</p>
+</div>
+<script>
+var KEY="cnts_prenotazioni";
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return[]}}
+function save(list){localStorage.setItem(KEY,JSON.stringify(list))}
+function show(id){["pub","mine","staff"].forEach(function(x){document.getElementById(x).classList.toggle("hidden",x!==id)})}
+function prenota(){
+ var n=document.getElementById("nome").value.trim();
+ var g=document.getElementById("giorno").value;
+ var d=document.getElementById("data").value;
+ var o=document.getElementById("ora").value;
+ if(!n||!g||!d||!o){alert("Compila Nome RP, Giorno, Data e Ora");return}
+ var list=load();
+ var code="CNTS-"+Math.floor(1000+Math.random()*9000);
+ var item={code:code,name:n,giorno:g,data:d,ora:o,status:"In attesa"};
+ list.push(item); save(list);
+ document.getElementById("risultato").innerHTML='<div class="ok"><b>Prenotazione salvata!</b><br>Codice: <b>'+code+'</b><br>Nome RP: '+n+'<br>Giorno: '+g+'<br>Data: '+d+'<br>Ora: '+o+'</div>';
+ document.getElementById("nome").value=""; document.getElementById("giorno").value=""; document.getElementById("data").value=""; document.getElementById("ora").value="";
+}
+function cerca(){
+ var c=document.getElementById("cercaCodice").value.trim().toUpperCase();
+ var list=load(); var f=list.filter(function(x){return x.code===c});
+ document.getElementById("risCerca").innerHTML=f.length?f.map(function(x){return "<b>"+x.code+"</b><br>Nome RP: "+x.name+"<br>Giorno: "+x.giorno+"<br>Data: "+x.data+"<br>Ora: "+x.ora+"<br>Stato: "+x.status}).join("<hr>"):"Nessuna prenotazione trovata.";
+}
+function loginStaff(){
+ var v=document.getElementById("codiceStaff").value.trim();
+ if(v==="6767"){document.getElementById("loginStaff").classList.add("hidden");document.getElementById("dashStaff").classList.remove("hidden");renderStaff();}
+ else{document.getElementById("errLogin").textContent="Codice errato";}
+}
+function logoutStaff(){document.getElementById("dashStaff").classList.add("hidden");document.getElementById("loginStaff").classList.remove("hidden");document.getElementById("codiceStaff").value="";}
+function setStatus(code,st){var list=load();list.forEach(function(x){if(x.code===code)x.status=st});save(list);renderStaff();}
+function delItem(code){if(!confirm("Eliminare questa prenotazione?"))return;var list=load().filter(function(x){return x.code!==code});save(list);renderStaff();}
+function renderStaff(){
+ var list=load(); var q=(document.getElementById("filtro").value||"").toLowerCase();
+ var f=list.filter(function(x){return !q||x.name.toLowerCase().includes(q)||x.code.toLowerCase().includes(q)});
+ document.getElementById("cTot").textContent=list.length;
+ document.getElementById("cAtt").textContent=list.filter(function(x){return x.status==="In attesa"}).length;
+ document.getElementById("cConf").textContent=list.filter(function(x){return x.status==="Confermata"}).length;
+ document.getElementById("cComp").textContent=list.filter(function(x){return x.status==="Completata"}).length;
+ document.getElementById("tbody").innerHTML=f.length?f.map(function(x){return "<tr><td><b>"+x.code+"</b></td><td>"+x.name+"</td><td>"+x.giorno+"</td><td>"+x.data+"</td><td>"+x.ora+"</td><td><span class='badge'>"+x.status+"</span></td><td><button class='small green' onclick=\"setStatus('"+x.code+"','Confermata')\">Conferma</button><button class='small' onclick=\"setStatus('"+x.code+"','Completata')\">Completa</button><button class='small gray' onclick=\"delItem('"+x.code+"')\">Elimina</button></td></tr>"}).join(""):"<tr><td colspan='7'>Nessuna prenotazione ancora.</td></tr>";
+}
+</script></body></html>
