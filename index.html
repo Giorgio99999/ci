@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ospedale Centrale RP - Prenota</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#0b1220;color:#eef2ff}
+a{color:inherit}header{position:sticky;top:0;z-index:10;background:rgba(11,18,32,.92);backdrop-filter:blur(8px);border-bottom:1px solid #1e293b}
+.top{max-width:1100px;margin:auto;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-weight:900;font-size:20px}.logo span{color:#38bdf8}.badge{background:#052e16;color:#4ade80;border:1px solid #14532d;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.badge2{background:#082f49;color:#7dd3fc;border:1px solid #0c4a6e;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.nav{display:flex;gap:8px}.nav button{border:1px solid #334155;background:#0f172a;color:#fff;padding:9px 14px;border-radius:999px;cursor:pointer;font-weight:700}.nav button.on{background:#0284c7;border-color:#0284c7}
+.wrap{max-width:1100px;margin:auto;padding:22px 18px 60px}
+.hero{background:linear-gradient(135deg,#0ea5e9,#1e3a8a);border-radius:24px;padding:28px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.hero h1{margin:0 0 8px;font-size:36px;line-height:1.05}.hero p{margin:0;opacity:.9}.hero .big{font-size:44px}
+.card{background:#111c33;border:1px solid #22304d;border-radius:20px;padding:20px}.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}@media(max-width:800px){.grid{grid-template-columns:1fr}.hero h1{font-size:28px}}
+label{font-size:13px;font-weight:700;color:#cbd5e1;display:block;margin:14px 0 6px}input,select{width:100%;padding:13px 14px;border-radius:12px;border:1px solid #334155;background:#0b1220;color:#fff;font-size:15px;outline:none}input:focus{border-color:#38bdf8}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:600px){.row{grid-template-columns:1fr}}
+.days{display:flex;flex-wrap:wrap;gap:8px}.days button{padding:10px 12px;border-radius:12px;border:1px solid #334155;background:#0b1220;color:#fff;cursor:pointer}.days button.on{background:#0284c7;border-color:#0284c7}
+.slots{display:flex;flex-wrap:wrap;gap:8px}.slots button{padding:10px 14px;border-radius:999px;border:1px solid #334155;background:#0b1220;color:#fff;cursor:pointer}.slots button.on{background:#16a34a;border-color:#16a34a}
+.urg{display:flex;gap:8px}.urg button{flex:1;padding:12px;border-radius:12px;border:2px solid #334155;background:#0b1220;color:#fff;cursor:pointer;font-weight:800}.urg button.on.V{background:#14532d;border-color:#22c55e}.urg button.on.G{background:#713f12;border-color:#eab308}.urg button.on.R{background:#7f1d1d;border-color:#ef4444}
+.btn{width:100%;padding:15px;border:0;border-radius:14px;background:#16a34a;color:#fff;font-weight:900;font-size:16px;cursor:pointer;margin-top:18px}.btn:hover{filter:brightness(1.1)}
+.muted{color:#94a3b8;font-size:13px;line-height:1.5}.pill{padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800}.V{background:#14532d;color:#4ade80}.G{background:#713f12;color:#facc15}.R{background:#7f1d1d;color:#fca5a5}
+table{width:100%;border-collapse:collapse;font-size:14px}th{ text-align:left;color:#94a3b8;font-size:12px;padding:10px}td{padding:12px 10px;border-top:1px solid #22304d}
+.small{padding:8px 10px;border-radius:999px;border:1px solid #334155;background:#0f172a;color:#fff;cursor:pointer;font-weight:700}.ok{background:#14532d}.del{background:#7f1d1d}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}@media(max-width:800px){.kpi{grid-template-columns:1fr 1fr}}
+.kpi b{font-size:26px;display:block}.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:260px;margin:14px auto}.keypad button{padding:16px;border-radius:14px;border:1px solid #334155;background:#0f172a;color:#fff;font-size:20px;font-weight:800;cursor:pointer}
+.success{background:#052e16;border:1px solid #14532d;border-radius:16px;padding:16px;margin-top:16px}.hidden{display:none!important}
+</style></head>
+<body>
+<header><div class="top"><div class="logo">🏥 Ospedale Centrale <span>RP</span> <span style="font-size:12px;background:#7f1d1d;padding:4px 8px;border-radius:999px">PILLBOX HILL • EMS</span></div><div style="display:flex;gap:8px;flex-wrap:wrap"><span class="badge">● OFFLINE • Salvato in locale</span><span class="badge2">Nessuna connessione richiesta</span></div><div class="nav"><button id="tabPrenota" class="on" onclick="show('prenota')">Prenota</button><button id="tabConsole" onclick="show('console')">Console Dottore</button></div></div></header>
+<div class="wrap">
+<div id="view-prenota">
+<div class="hero"><div><h1>Prenota la tua visita<br>in RP</h1><p>Ospedale aperto H24 • Presentati in ospedale all'orario prenotato.<br>Dott. Marco Rossi — Primario EMS</p><p style="margin-top:12px">⭐ 4.9 • 230+ visite RP • Regole RP: no RDM/VDM in ospedale, no metagaming, rispetta il FearRP</p></div><div class="big">🚑</div></div>
+<div class="grid" style="margin-top:18px"><div class="card"><h2 style="margin:0">Nuova prenotazione</h2><p class="muted">Ti chiediamo solo nome e cognome. Niente telefono, email, Discord o ID.</p>
+<label>Nome *</label><input id="nome" placeholder="Es. Marco"><label>Cognome *</label><input id="cognome" placeholder="Es. Rossi">
+<label>Giorno</label><div class="days" id="days"></div>
+<label>Orario</label><div class="slots" id="slots"></div>
+<label>Livello urgenza</label><div class="urg"><button class="V" onclick="setUrg('Verde',this)">🟢 Verde</button><button class="G" onclick="setUrg('Giallo',this)">🟡 Giallo</button><button class="R" onclick="setUrg('Rosso',this)">🔴 Rosso</button></div>
+<label><input type="checkbox" id="consenso" style="width:auto"> Accetto le regole RP del server</label>
+<button class="btn" onclick="prenota()">✅ Conferma prenotazione</button>
+<div id="okBox" class="success hidden"></div>
+</div>
+<div><div class="card"><h3 style="margin:0">Come funziona in RP</h3><p class="muted">1. Prenota con nome e cognome<br>2. Presentati all'ospedale • /me entra in ospedale<br>3. Il dottore ti prende in carico in console<br>4. Rispetta il roleplay fino alle dimissioni</p></div>
+<div class="card" style="margin-top:14px"><h3 style="margin:0">Cerca la tua prenotazione</h3><label>Codice prenotazione</label><input id="cercaCodice" placeholder="Es. RP-1234"><label>Cognome</label><input id="cercaCognome" placeholder="Cognome"><button class="btn" style="background:#0284c7" onclick="cerca()">Cerca</button><div id="cercaRes" class="muted" style="margin-top:12px"></div></div>
+<div class="card" style="margin-top:14px"><h3 style="margin:0">FAQ RP</h3><p class="muted"><b>Devo fare /me?</b> Sì, per entrare e descrivere sintomi.<br><b>Posso annullare?</b> Sì, dalla ricerca con codice + cognome.<br><b>Serve Discord?</b> No, solo nome e cognome.</p></div></div></div></div>
+
+<div id="view-console" class="hidden">
+<div id="loginBox" class="card" style="max-width:420px;margin:auto;text-align:center"><h2 style="margin:0">Console Dottore</h2><p class="muted">Inserisci il PIN offline • Demo: <b>1234</b></p><div id="pinDots" style="font-size:28px;letter-spacing:8px">••••</div><div class="keypad" id="keypad"></div><button class="small" onclick="clearPin()">Cancella</button><p id="pinErr" style="color:#fca5a5"></p></div>
+<div id="dash" class="hidden"><div class="kpi"><div class="card"><span class="muted">Oggi</span><b id="kOggi">0</b></div><div class="card"><span class="muted">Totali</span><b id="kTot">0</b></div><div class="card"><span class="muted">In attesa</span><b id="kAtt">0</b></div><div class="card"><span class="muted">Urg. Rosse</span><b id="kRosse">0</b></div></div>
+<div class="card" style="margin-top:16px"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><h3 style="margin:0">Prenotazioni</h3><div><input id="filtro" placeholder="Cerca nome, cognome, codice..." style="width:260px" oninput="render()"><button class="small" onclick="logout()">Logout</button> <button class="small" onclick="resetDemo()">Reset demo</button></div></div>
+<div style="overflow:auto"><table><thead><tr><th>Codice</th><th>Nome</th><th>Cognome</th><th>Data</th><th>Ora</th><th>Urgenza</th><th>Stato</th><th>Azioni</th></tr></thead><tbody id="tbody"></tbody></table></div></div>
+<p class="muted" style="text-align:center;margin-top:14px">Tutto salvato solo in questo browser (localStorage). Funziona senza internet.</p></div>
+</div></div>
+<script>
+const KEY='rp_bookings_offline_v1';
+let day='',slot='',urg='Verde',pin='';
+function fmt(d){return d.toLocaleDateString('it-IT',{weekday:'short',day:'2-digit',month:'short'})}
+function load(){try{let v=JSON.parse(localStorage.getItem(KEY));if(v&&v.length)return v}catch(e){} return seed()}
+function seed(){let a=[],today=new Date();for(let i=0;i<8;i++){let d=new Date(today);d.setDate(today.getDate()+(i%2));a.push({code:'RP-'+(1000+i*7),nome:['Luca','Sara','Marco','Giulia','Alessandro','Elena','Davide','Marta'][i],cognome:['Bianchi','Verdi','Rossi','Ferrari','Russo','Greco','Marino','Costa'][i],data:d.toISOString().slice(0,10),ora:['09:30','10:00','11:15','15:30','16:00','17:20','09:00','18:00'][i],urg:['Verde','Giallo','Rosso','Verde','Giallo','Verde','Rosso','Giallo'][i],stato:i<2?'Confermata':'In attesa'});}return a}
+let bookings=load();function save(){try{localStorage.setItem(KEY,JSON.stringify(bookings))}catch(e){}}
+let daysEl=document.getElementById('days'),slotsEl=document.getElementById('slots');
+let dates=[];for(let i=0;i<14;i++){let d=new Date();d.setDate(d.getDate()+i);dates.push(d)}
+function renderDays(){daysEl.innerHTML='';dates.forEach((d,i)=>{let b=document.createElement('button');b.textContent=(i==0?'Oggi • ':'')+fmt(d);if(day==d.toISOString().slice(0,10))b.className='on';b.onclick=()=>{day=d.toISOString().slice(0,10);renderDays()};daysEl.appendChild(b)});if(!day){day=dates[0].toISOString().slice(0,10)}}
+let orari=['09:00','09:30','10:00','10:30','11:00','11:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00'];
+function renderSlots(){slotsEl.innerHTML='';orari.forEach(o=>{let b=document.createElement('button');b.textContent=o;if(slot==o)b.className='on';b.onclick=()=>{slot=o;renderSlots()};slotsEl.appendChild(b)});if(!slot)slot='10:00'}
+function setUrg(u,el){urg=u;document.querySelectorAll('.urg button').forEach(x=>x.classList.remove('on'));el.classList.add('on')}
+function prenota(){let n=document.getElementById('nome').value.trim(),c=document.getElementById('cognome').value.trim();if(!n||!c)return alert('Inserisci nome e cognome');if(!document.getElementById('consenso').checked)return alert('Accetta le regole RP');let code='RP-'+Math.floor(1000+Math.random()*9000);bookings.unshift({code,nome:n,cognome:c,data:day,ora:slot,urg,stato:'In attesa'});save();document.getElementById('okBox').classList.remove('hidden');document.getElementById('okBox').innerHTML='<b>✅ Prenotazione confermata!</b><br>Codice: <b>'+code+'</b><br>'+n+' '+c+' • '+day+' • '+slot+' • '+urg+'<br><span class="muted">Presentati all\'ospedale, fai /me entra in ospedale</span>';document.getElementById('nome').value='';document.getElementById('cognome').value='';render()}
+function cerca(){let code=document.getElementById('cercaCodice').value.trim().toUpperCase(),cog=document.getElementById('cercaCognome').value.trim().toLowerCase();let b=bookings.find(x=>x.code==code&&x.cognome.toLowerCase()==cog);let el=document.getElementById('cercaRes');if(!b){el.innerHTML='Nessuna prenotazione trovata.';return}el.innerHTML='<b>'+b.code+'</b> — '+b.nome+' '+b.cognome+' • '+b.data+' '+b.ora+' • '+b.urg+' • '+b.stato+'<br><button class="small del" onclick="annullaPub(\''+b.code+'\')">Annulla prenotazione</button>'}
+function annullaPub(code){bookings=bookings.map(x=>x.code==code?{...x,stato:'Annullata'}:x);save();render();cerca();alert('Prenotazione annullata')}
+function show(v){document.getElementById('view-prenota').classList.toggle('hidden',v!='prenota');document.getElementById('view-console').classList.toggle('hidden',v!='console');document.getElementById('tabPrenota').className=v=='prenota'?'on':'';document.getElementById('tabConsole').className=v=='console'?'on':'';if(v=='console')render()}
+function render(){let f=(document.getElementById('filtro')?.value||'').toLowerCase();let list=bookings.filter(x=>(x.nome+' '+x.cognome+' '+x.code).toLowerCase().includes(f));document.getElementById('kTot').textContent=bookings.length;document.getElementById('kAtt').textContent=bookings.filter(x=>x.stato=='In attesa').length;document.getElementById('kRosse').textContent=bookings.filter(x=>x.urg=='Rosso'&&x.stato!='Annullata').length;let today=new Date().toISOString().slice(0,10);document.getElementById('kOggi').textContent=bookings.filter(x=>x.data==today).length;document.getElementById('tbody').innerHTML=list.map(x=>'<tr><td><b>'+x.code+'</b></td><td>'+x.nome+'</td><td>'+x.cognome+'</td><td>'+x.data+'</td><td>'+x.ora+'</td><td><span class="pill '+(x.urg=='Verde'?'V':x.urg=='Giallo'?'G':'R')+'">'+x.urg+'</span></td><td>'+x.stato+'</td><td><button class="small ok" onclick="setStato(\''+x.code+'\',\'Confermata\')">Conferma</button> <button class="small" onclick="setStato(\''+x.code+'\',\'Dimesso\')">Dimesso</button> <button class="small del" onclick="setStato(\''+x.code+'\',\'Annullata\')">Annulla</button></td></tr>').join('')||'<tr><td colspan="8">Nessuna prenotazione</td></tr>'}
+function setStato(code,s){bookings=bookings.map(x=>x.code==code?{...x,stato:s}:x);save();render()}
+function resetDemo(){localStorage.removeItem(KEY);bookings=seed();save();render();alert('Dati demo ripristinati')}
+function logout(){document.getElementById('dash').classList.add('hidden');document.getElementById('loginBox').classList.remove('hidden');pin='';updPin()}
+function updPin(){document.getElementById('pinDots').textContent='•'.repeat(pin.length)+'•'.repeat(Math.max(0,4-pin.length));document.getElementById('pinErr').textContent=''}
+let kp=document.getElementById('keypad');for(let i=1;i<=9;i++){let b=document.createElement('button');b.textContent=i;b.onclick=()=>press(i);kp.appendChild(b)}let b0=document.createElement('button');b0.textContent='0';b0.onclick=()=>press(0);kp.appendChild(b0);
+function press(n){if(pin.length>=4)return;pin+=n;updPin();if(pin.length==4){if(pin=='1234'){document.getElementById('loginBox').classList.add('hidden');document.getElementById('dash').classList.remove('hidden');render()}else{document.getElementById('pinErr').textContent='PIN errato, riprova';pin='';setTimeout(updPin,600)}}}
+function clearPin(){pin='';updPin()}
+renderDays();renderSlots();render();setUrg('Verde',document.querySelector('.urg button'))
+</script></body></html>
